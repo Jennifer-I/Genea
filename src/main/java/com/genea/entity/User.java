@@ -37,7 +37,7 @@ public class User {
 
 
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private VerificationToken verificationToken;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<UserAccountToken> userAccountToken;
 
 }

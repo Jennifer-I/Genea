@@ -1,5 +1,6 @@
 package com.genea.entity;
 
+import com.genea.enums.TokenType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,8 +12,8 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "verification_token")
-public class VerificationToken {
+@Table(name = "AccountToken")
+public class UserAccountToken {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -21,12 +22,13 @@ public class VerificationToken {
     private LocalDateTime expiresAt;
     private LocalDateTime confirmedAt;
 
-
-
-
-    @OneToOne(fetch = FetchType.LAZY)
+    @Enumerated(EnumType.STRING)
+    private TokenType tokenType;
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 
 
+    public UserAccountToken(Long id, String confirmationToken) {
+    }
 }
