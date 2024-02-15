@@ -9,6 +9,7 @@ import com.genea.enums.TokenType;
 import com.genea.exception.UserNotFoundException;
 import com.genea.repository.TokenRepository;
 import com.genea.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,19 +21,26 @@ import java.util.UUID;
 
 @Slf4j
 @Service
+
 public class UserServiceImplementation implements UserService {
-    @Value("${spring.mail.username}")
-    public String sender;
+
+    private  final String sender;
+
+    private  final String adminEmail;
 
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
 
-    public UserServiceImplementation(UserRepository userRepository, EmailService emailService, TokenRepository tokenRepository) {
+    public UserServiceImplementation(@Value("${spring.mail.username}") String sender, @Value("${admin_email}") String adminEmail, UserRepository userRepository, EmailService emailService, TokenRepository tokenRepository) {
+        this.sender = sender;
+        this.adminEmail = adminEmail;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.tokenRepository = tokenRepository;
     }
+
+
 
     private User createUserFromRequest(RegistrationRequestDto request) {
         return User.builder()
@@ -215,6 +223,35 @@ public class UserServiceImplementation implements UserService {
             return new ApiResponse<>(HttpStatus.OK.value(), "The provided confirmation token is invalid or expired!", null, HttpStatus.BAD_REQUEST);
         }
 
+
+    }
+
+    @Override
+    public ApiResponse<String> createAdmin(RegistrationRequestDto registrationRequestDto) throws InterruptedException {
+        Optional<User> optionalUser = userRepository.findByEmail(registrationRequestDto.getEmail());
+        if (optionalUser.isPresent()) {
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "User already exists", null, HttpStatus.BAD_REQUEST);
+        }
+        User admin = User.builder()
+                .firstName(registrationRequestDto.getFirstName())
+                .lastName(registrationRequestDto.getLastName())
+                .email(registrationRequestDto.getEmail())
+                .role(Role.ADMIN)
+                .password(registrationRequestDto.getPassword())
+                .fullName(registrationRequestDto.getFirstName() + " " + registrationRequestDto.getLastName())
+                .build();
+        if (registrationRequestDto.getEmail().equals(adminEmail)) {
+            userRepository.save(admin);
+            UserAccountToken userAccountToken = createVerificationToken(admin.getId());
+            userAccountToken.setTokenType(TokenType.VERIFICATION_TOKEN);
+            tokenRepository.save(userAccountToken);
+
+            sendVerificationEmail(registrationRequestDto, userAccountToken.getConfirmationToken());
+
+            return new ApiResponse<>(HttpStatus.OK.value(), "Admin created successfully", admin.getFirstName() + " " + admin.getLastName() + " is now an admin", HttpStatus.OK);
+        } else {
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Email is not recognized", null, HttpStatus.BAD_REQUEST);
+        }
 
     }
 

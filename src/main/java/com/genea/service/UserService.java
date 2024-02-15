@@ -16,4 +16,6 @@ public interface UserService {
     ApiResponse<String> forgotPassword(ForgotPasswordRequest forgotPasswordRequest) throws InterruptedException;
 
     ApiResponse<String> resetPassword( String confirmationToken, ResetPasswordRequest resetPasswordRequest);
+
+    ApiResponse<String> createAdmin(RegistrationRequestDto registrationRequestDto) throws InterruptedException;
 }

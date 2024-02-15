@@ -41,14 +41,18 @@ public class AuthController {
     }
 
     @PutMapping("/resetPassword")
-    public ResponseEntity<ApiResponse<String>> resetPassword( @RequestParam("confirmationToken") String confirmationToken, @Valid @RequestBody ResetPasswordRequest resetPasswordRequest){
+    public ResponseEntity<ApiResponse<String>> resetPassword(@RequestParam("confirmationToken") String confirmationToken, @Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
         ApiResponse<String> response = userService.resetPassword(confirmationToken, resetPasswordRequest);
         return ResponseEntity.ok(response);
     }
 
-
+    @PostMapping("/createAdmin")
+    public ResponseEntity<ApiResponse<String>> createAdmin(@RequestBody RegistrationRequestDto request) throws UserNotFoundException, InterruptedException {
+        ApiResponse<String> response = userService.createAdmin(request);
+        return ResponseEntity.ok(response);
     }
 
+}
 
 
 
