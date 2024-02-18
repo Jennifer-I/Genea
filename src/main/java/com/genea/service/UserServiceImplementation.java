@@ -9,7 +9,7 @@ import com.genea.enums.TokenType;
 import com.genea.exception.UserNotFoundException;
 import com.genea.repository.TokenRepository;
 import com.genea.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -253,6 +253,12 @@ public class UserServiceImplementation implements UserService {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Email is not recognized", null, HttpStatus.BAD_REQUEST);
         }
 
+
+
+
+        }
+    public ApiResponse<LoginResponse> loginUser(LoginRequest loginRequest){
+        return null;
     }
 
 
