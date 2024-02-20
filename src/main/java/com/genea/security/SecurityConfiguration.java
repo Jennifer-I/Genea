@@ -25,12 +25,14 @@ public class SecurityConfiguration {
         this.geneaAppFilter = geneaAppFilter;
     }
 
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((authorizations) -> authorizations
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
                         .requestMatchers("error").permitAll()
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(geneaAppFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

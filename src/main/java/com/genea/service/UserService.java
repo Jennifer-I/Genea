@@ -18,4 +18,6 @@ public interface UserService {
     ApiResponse<String> resetPassword( String confirmationToken, ResetPasswordRequest resetPasswordRequest);
 
     ApiResponse<String> createAdmin(RegistrationRequestDto registrationRequestDto) throws InterruptedException;
+
+    ApiResponse<LoginResponse> loginUser(LoginRequest loginRequest) throws UserNotFoundException;
 }

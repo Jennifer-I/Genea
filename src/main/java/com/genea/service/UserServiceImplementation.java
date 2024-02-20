@@ -10,9 +10,16 @@ import com.genea.exception.UserNotFoundException;
 import com.genea.repository.TokenRepository;
 import com.genea.repository.UserRepository;
 
+import com.genea.security.JwtConfig;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,23 +30,25 @@ import java.util.UUID;
 @Service
 
 public class UserServiceImplementation implements UserService {
-
-    private  final String sender;
-
-    private  final String adminEmail;
-
+    private final String sender;
+    private final String adminEmail;
+    private final JwtConfig jwtConfig;
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final TokenRepository tokenRepository;
+    private final AuthenticationManager authenticationManager;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImplementation(@Value("${spring.mail.username}") String sender, @Value("${admin_email}") String adminEmail, UserRepository userRepository, EmailService emailService, TokenRepository tokenRepository) {
+    public UserServiceImplementation(@Value("${spring.mail.username}") String sender, @Value("${admin_email}") String adminEmail, JwtConfig jwtConfig, UserRepository userRepository, EmailService emailService, TokenRepository tokenRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
         this.sender = sender;
         this.adminEmail = adminEmail;
+        this.jwtConfig = jwtConfig;
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.tokenRepository = tokenRepository;
+        this.authenticationManager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
     }
-
 
 
     private User createUserFromRequest(RegistrationRequestDto request) {
@@ -48,7 +57,7 @@ public class UserServiceImplementation implements UserService {
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .fullName(request.getFirstName() + " " + request.getLastName())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(request.getPassword()))
                 .isVerified(false)
                 .isActive(false)
                 .role(Role.CUSTOMER)
@@ -211,7 +220,7 @@ public class UserServiceImplementation implements UserService {
             Optional<User> userOptional = userRepository.findByEmail(userAccountToken.getUser().getEmail());
             if (userOptional.isPresent()) {
                 User user = userOptional.get();
-                user.setPassword(resetPasswordRequest.getPassword());
+                user.setPassword(passwordEncoder.encode(resetPasswordRequest.getPassword()));
                 userRepository.save(user);
                 userAccountToken.setConfirmedAt(LocalDateTime.now());
                 tokenRepository.save(userAccountToken);
@@ -237,7 +246,7 @@ public class UserServiceImplementation implements UserService {
                 .lastName(registrationRequestDto.getLastName())
                 .email(registrationRequestDto.getEmail())
                 .role(Role.ADMIN)
-                .password(registrationRequestDto.getPassword())
+                .password(passwordEncoder.encode(registrationRequestDto.getPassword())).isActive(true)
                 .fullName(registrationRequestDto.getFirstName() + " " + registrationRequestDto.getLastName())
                 .build();
         if (registrationRequestDto.getEmail().equals(adminEmail)) {
@@ -254,11 +263,33 @@ public class UserServiceImplementation implements UserService {
         }
 
 
+    }
 
+
+    @Override
+    public ApiResponse<LoginResponse> loginUser(LoginRequest loginRequest) throws UserNotFoundException {
+        Authentication authenticateUser;
+        try {
+            authenticateUser = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
+            log.info("User authenticated");
+        }catch (DisabledException es) {
+                log.error("User is disabled", es);
+            return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Invalid email or password", null, HttpStatus.BAD_REQUEST);
 
         }
-    public ApiResponse<LoginResponse> loginUser(LoginRequest loginRequest){
-        return null;
+        SecurityContextHolder.getContext().setAuthentication(authenticateUser);
+        User appUser = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        appUser.setIsActive(true);
+        appUser.setLastLogin(LocalDateTime.now());
+        userRepository.save(appUser);
+        log.info("user updated in the database");
+        String tokenGenerated = "Bearer" + jwtConfig.generateToken(authenticateUser, appUser.getRole());
+        LoginResponse loginResponse = LoginResponse.builder()
+                .token(tokenGenerated)
+                .build();
+        return new ApiResponse<>(HttpStatus.OK.value(), "Login successful", loginResponse, HttpStatus.OK);
+
+
     }
 
 

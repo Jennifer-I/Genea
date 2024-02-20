@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -25,17 +26,15 @@ public class User {
     private String email;
     private String password;
 
-    @Enumerated(EnumType.ORDINAL)
+    @Enumerated(EnumType.STRING)
     private Role role;
     @OneToMany(mappedBy = "user")
     private List<Order> orders;
     Boolean isActive = false;
-
+    private LocalDateTime createdAt;
+    private LocalDateTime LastLogin;
     private Boolean isVerified = false;
     private String fullName;
-
-
-
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserAccountToken> userAccountToken;

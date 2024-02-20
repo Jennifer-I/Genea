@@ -51,6 +51,11 @@ public class AuthController {
         ApiResponse<String> response = userService.createAdmin(request);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest loginRequest) {
+        ApiResponse<LoginResponse> response = userService.loginUser(loginRequest);
+        return ResponseEntity.ok(response);
+    }
 
 }
 
