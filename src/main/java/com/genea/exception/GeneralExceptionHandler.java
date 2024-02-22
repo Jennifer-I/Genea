@@ -1,7 +1,7 @@
 package com.genea.exception;
 
 
-import com.genea.dto.ApiResponse;
+import com.genea.dto.response.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;

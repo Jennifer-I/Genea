@@ -1,4 +1,4 @@
-package com.genea.dto;
+package com.genea.dto.request;
 
 import com.genea.enums.Role;
 import lombok.*;

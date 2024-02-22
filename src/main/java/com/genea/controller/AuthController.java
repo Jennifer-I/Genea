@@ -1,7 +1,11 @@
 package com.genea.controller;
 
-import com.genea.dto.*;
+import com.genea.dto.request.*;
+import com.genea.dto.response.ApiResponse;
+import com.genea.dto.response.LoginResponse;
+import com.genea.dto.response.UserResponseDto;
 import com.genea.exception.UserNotFoundException;
+import com.genea.service.ProductService;
 import com.genea.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/auth")
 public class AuthController {
     private final UserService userService;
+    private final ProductService productService;
 
     @PostMapping("/register")
     public ResponseEntity<ApiResponse<UserResponseDto>> registerUser(@RequestBody RegistrationRequestDto request) throws UserNotFoundException, InterruptedException {
@@ -56,8 +61,12 @@ public class AuthController {
         ApiResponse<LoginResponse> response = userService.loginUser(loginRequest);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/add")
+    public String addProduct(@RequestBody CreateProductRequest productRequest) {
+        return productService.addProduct(productRequest);
 
-}
+    }
+    }
 
 
 

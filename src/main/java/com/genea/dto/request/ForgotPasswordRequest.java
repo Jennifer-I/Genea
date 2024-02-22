@@ -1,4 +1,4 @@
-package com.genea.dto;
+package com.genea.dto.request;
 
 import lombok.*;
 import org.springframework.web.bind.annotation.RequestMapping;

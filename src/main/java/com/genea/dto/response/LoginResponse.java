@@ -1,4 +1,4 @@
-package com.genea.dto;
+package com.genea.dto.response;
 
 import lombok.Builder;
 import lombok.Getter;

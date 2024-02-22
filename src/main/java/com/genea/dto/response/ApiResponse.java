@@ -1,4 +1,4 @@
-package com.genea.dto;
+package com.genea.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +27,8 @@ public ApiResponse(String message, T data){
 
     public ApiResponse(String errorMessage) {
     }
+
+
 
     public static <T> ApiResponse<T> OK(T data){
         return new ApiResponse<>("OK", data);

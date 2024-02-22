@@ -1,6 +1,9 @@
 package com.genea.service;
 
-import com.genea.dto.*;
+import com.genea.dto.request.*;
+import com.genea.dto.response.ApiResponse;
+import com.genea.dto.response.LoginResponse;
+import com.genea.dto.response.UserResponseDto;
 import com.genea.email.EmailService;
 import com.genea.entity.User;
 import com.genea.entity.UserAccountToken;
@@ -246,6 +249,9 @@ public class UserServiceImplementation implements UserService {
                 .lastName(registrationRequestDto.getLastName())
                 .email(registrationRequestDto.getEmail())
                 .role(Role.ADMIN)
+                .isVerified(false)
+                .isActive(false)
+                .createdAt(LocalDateTime.now())
                 .password(passwordEncoder.encode(registrationRequestDto.getPassword())).isActive(true)
                 .fullName(registrationRequestDto.getFirstName() + " " + registrationRequestDto.getLastName())
                 .build();

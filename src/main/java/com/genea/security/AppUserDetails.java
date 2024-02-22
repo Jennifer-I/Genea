@@ -26,13 +26,15 @@ public class AppUserDetails implements UserDetails {
         this.email = user.getEmail();
         this.fullName = user.getFullName();
         this.isEnabled = user.getIsVerified();
-        this.authorities = Stream.of(new SimpleGrantedAuthority(user.getRole().name()))
-                .collect(Collectors.toList());
+        this.authorities =Stream.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                        .collect(Collectors.toList());
+
 
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+
         return authorities;
     }
 
@@ -64,5 +66,9 @@ public class AppUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    public String getFullName() {
+        return fullName;
     }
 }
