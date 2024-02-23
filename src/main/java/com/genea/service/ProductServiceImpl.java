@@ -61,7 +61,7 @@ public class ProductServiceImpl implements ProductService {
         String loggedInUser = utils.getLoggedInUser();
         User user = userRepository.findByEmail(loggedInUser)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
-        if (user != null) {
+        if (user != null){
             Manufacturer manufacturer = Manufacturer.builder()
                     .name(manufacturerRequest.getName())
                     .location(manufacturerRequest.getLocation())
@@ -69,8 +69,8 @@ public class ProductServiceImpl implements ProductService {
             manufacturerRepository.save(manufacturer);
             return "manufacturer added successfully";
         }
+     return "failed to add manufacturer";
 
-        return "failed to add manufacturer";
     }
 
     @Override
@@ -89,26 +89,16 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-        String loggedInUser = utils.getLoggedInUser();
-        User user = userRepository.findByEmail(loggedInUser)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        if (user != null) {
-            return productRepository.findById(id)
-                    .orElseThrow(() -> new CustomException("Product not found"));
-        }
-        return null;
+
+        return productRepository.findById(id).orElseThrow(() -> new CustomException("Product not found"));
+
     }
 
     @Override
     public Manufacturer getManufacturerById(Long id) {
-        String loggedInUser = utils.getLoggedInUser();
-        User user = userRepository.findByEmail(loggedInUser)
-                .orElseThrow(() -> new UserNotFoundException("User not found"));
-        if (user != null) {
-            return manufacturerRepository.findById(id)
+        return manufacturerRepository.findById(id)
                     .orElseThrow(() -> new CustomException("Manufacturer not found"));
-        }
-        return null;
+
     }
 
     @Override
@@ -120,8 +110,9 @@ public class ProductServiceImpl implements ProductService {
     @Override
 
     public Product getProductByName(String name) {
-        return productRepository.findByName(name)
+       return productRepository.findByName(name)
                 .orElseThrow(() -> new CustomException("Product not found"));
+
     }
 
     @Override
