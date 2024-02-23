@@ -29,7 +29,7 @@ public class EmailService {
 
     public String sendEmail(EmailDetailsRequest request) throws InterruptedException {
          int retryCount = 2;
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 2; i++) {
             try {
                 MimeMessage message = javaMailSender.createMimeMessage();
                 MimeMessageHelper helper = new MimeMessageHelper(message, true);

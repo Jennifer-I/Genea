@@ -4,6 +4,7 @@ import com.genea.enums.ProductCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Builder
@@ -37,7 +38,21 @@ public class Product {
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturer;
 
-
+    @Override
+    public String toString() {
+        return String.format("Product {\n" +
+                        "\tid=%d,\n" +
+                        "\tname='%s',\n" +
+                        "\tdescription='%s',\n" +
+                        "\tprice=%.2f,\n" +
+                        "\tstock=%d,\n" +
+                        "\tcategory=%s,\n" +
+                        "\timage='%s',\n" +
+                        "\treviews=%s,\n" +
+                        "\tmanufacturer=" + (manufacturer != null ? manufacturer.getName() : "null") + "\n"+
+                        "}\n",
+                id, name, description, price, stock, category, Arrays.toString(image), reviews);
+    }
 
 
 }

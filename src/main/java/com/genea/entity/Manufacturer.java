@@ -22,4 +22,13 @@ public class Manufacturer {
     @OneToMany(mappedBy = "manufacturer")
     private List<Product> products;
 
+    @Override
+    public String toString() {
+        return "Manufacturer{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", location='" + location + '\'' +
+                ", products=" + products +
+                '}';
+    }
 }

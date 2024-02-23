@@ -1,12 +1,17 @@
 package com.genea.repository;
 
 import com.genea.entity.Product;
+import com.genea.enums.ProductCategory;
+import jdk.jfr.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface  ProductRepository extends JpaRepository<Product,Long> {
     Optional<Product> findByName(String name);
+
+    List<Product> findByCategory(ProductCategory category);
 }
