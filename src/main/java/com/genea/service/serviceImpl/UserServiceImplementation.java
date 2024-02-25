@@ -1,4 +1,4 @@
-package com.genea.service;
+package com.genea.service.serviceImpl;
 
 import com.genea.dto.request.*;
 import com.genea.dto.response.ApiResponse;
@@ -14,6 +14,7 @@ import com.genea.repository.TokenRepository;
 import com.genea.repository.UserRepository;
 
 import com.genea.security.JwtConfig;
+import com.genea.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -99,7 +100,7 @@ public class UserServiceImplementation implements UserService {
 
         sendVerificationEmail(request, userAccountToken.getConfirmationToken());
 
-        return new ApiResponse<>(HttpStatus.OK.value(), newUser.getFirstName() + " welcome to Genea! Please check your email to confirm your account");
+        return new ApiResponse<>(HttpStatus.OK.value(), newUser.getFirstName() + "\n welcome to Genea! Please check your email to confirm your account");
     }
 
 
@@ -139,7 +140,7 @@ public class UserServiceImplementation implements UserService {
                 userAccountToken.setConfirmedAt(LocalDateTime.now());
                 tokenRepository.save(userAccountToken);
 
-                return new ApiResponse<>(HttpStatus.OK.value(), "OTP verified successfully", null, HttpStatus.OK);
+                return new ApiResponse<>(HttpStatus.OK.value(), "email verified successfully", null, HttpStatus.OK);
             } else {
                 return new ApiResponse<>(HttpStatus.OK.value(), "User not in database", null, HttpStatus.BAD_REQUEST);
             }

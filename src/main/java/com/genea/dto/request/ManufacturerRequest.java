@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ManufacturerRequest {
-    private String name;
+    private String manufacturerName;
     private String location;
 
 

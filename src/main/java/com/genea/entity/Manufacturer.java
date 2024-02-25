@@ -16,7 +16,7 @@ public class Manufacturer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String name;
+    private String manufacturersName;
     private String location;
 
     @OneToMany(mappedBy = "manufacturer")
@@ -26,9 +26,10 @@ public class Manufacturer {
     public String toString() {
         return "Manufacturer{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
+                ", name='" + manufacturersName + '\'' +
                 ", location='" + location + '\'' +
                 ", products=" + products +
                 '}';
     }
+
 }

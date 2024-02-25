@@ -19,7 +19,7 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String name;
+    private String productName;
 
     private String description;
 
@@ -27,14 +27,16 @@ public class Product {
 
 
     private Integer stock;
+    @Enumerated(EnumType.STRING)
     private ProductCategory category;
-    @Lob
+
+    @Column(columnDefinition = "bytea")
     private byte[] image;
 
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "manufacturer_id")
     private Manufacturer manufacturer;
 
@@ -42,16 +44,16 @@ public class Product {
     public String toString() {
         return String.format("Product {\n" +
                         "\tid=%d,\n" +
-                        "\tname='%s',\n" +
+                        "\tproductName='%s',\n" +
                         "\tdescription='%s',\n" +
                         "\tprice=%.2f,\n" +
                         "\tstock=%d,\n" +
                         "\tcategory=%s,\n" +
                         "\timage='%s',\n" +
                         "\treviews=%s,\n" +
-                        "\tmanufacturer=" + (manufacturer != null ? manufacturer.getName() : "null") + "\n"+
+                        "\tmanufacturer=" + (manufacturer != null ? manufacturer.getManufacturersName() : "null") + "\n"+
                         "}\n",
-                id, name, description, price, stock, category, Arrays.toString(image), reviews);
+                id, productName, description, price, stock, category, Arrays.toString(image), reviews);
     }
 
 

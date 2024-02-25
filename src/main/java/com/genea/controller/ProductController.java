@@ -2,11 +2,16 @@ package com.genea.controller;
 
 import com.genea.dto.request.CreateProductRequest;
 import com.genea.dto.request.ManufacturerRequest;
+import com.genea.dto.response.ProductSearchResponse;
+import com.genea.entity.Product;
 import com.genea.enums.ProductCategory;
 import com.genea.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -67,15 +72,31 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/getManufacturerByName/{name}")
-    public String getManufacturerByName(@PathVariable String name) {
-        return productService.getManufacturerByName(name).toString();
+    @GetMapping("/getManufacturerByName/{manufacturersName}")
+    public String getManufacturerByName(@PathVariable String manufacturersName) {
+        return productService.getManufacturerByName(manufacturersName).toString();
     }
 
-    @PreAuthorize("hasRole('ADMIN','CUSTOMER')")
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/getProductsByCategory/{category}")
-    public String getProductsByCategory(@PathVariable ProductCategory category) {
-        return productService.getProductsByCategory(category).toString();
+    public ResponseEntity<String> getProductsByCategory(@PathVariable ProductCategory category) {
+        return ResponseEntity.ok(productService.getProductsByCategory(category).toString());
+    }
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @GetMapping("/getProductByManufacturersName/{manufacturersName}")
+    public ResponseEntity<List<Product>> getProductsByManufacturersName(@PathVariable String manufacturersName) {
+        return ResponseEntity.ok(productService.getProductByManufacturersName(manufacturersName));
+    }
+
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @GetMapping("/searchProductByKeyword/{keyword}")
+    public ResponseEntity<List<ProductSearchResponse>> searchProductByKeyword(@PathVariable String keyword) {
+        return ResponseEntity.ok(productService.getProductsByKeyword(keyword));
+    }
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @GetMapping("/getProductByManufacturerLocation/{location}")
+    public ResponseEntity<List<Product>> getProductByManufacturerLocation(@PathVariable String location) {
+        return ResponseEntity.ok(productService.findProductByManufacturerLocation(location));
     }
 
 
