@@ -147,12 +147,11 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<Product> findProductByManufacturerLocation(String location) {
+    public List<ProductSearchResponse> getProductByManufacturerLocation(String location) {
         List<Product> products = productRepository.findProductByManufacturerLocation(location);
-        if (products.isEmpty()) {
-            throw new CustomException("Product not found");
-        }
-        return products;
+        return products.stream()
+                .map(ProductSearchResponse::new)
+                .collect(Collectors.toList());
     }
 
     @Override

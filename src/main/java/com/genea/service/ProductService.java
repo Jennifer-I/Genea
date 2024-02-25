@@ -36,10 +36,10 @@ public interface ProductService {
     List<Product> getProductByManufacturersName(String name);
 
 
-    List<Product> findProductByManufacturerLocation(String location);
 
 
 
+    List<ProductSearchResponse> getProductByManufacturerLocation(String location);
 
     List<ProductSearchResponse> getProductsByKeyword(String keyword);
 }

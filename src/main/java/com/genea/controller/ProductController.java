@@ -95,8 +95,8 @@ public class ProductController {
     }
     @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
     @GetMapping("/getProductByManufacturerLocation/{location}")
-    public ResponseEntity<List<Product>> getProductByManufacturerLocation(@PathVariable String location) {
-        return ResponseEntity.ok(productService.findProductByManufacturerLocation(location));
+    public ResponseEntity<List<ProductSearchResponse>> getProductByManufacturerLocation(@PathVariable String location) {
+        return ResponseEntity.ok(productService.getProductByManufacturerLocation(location));
     }
 
 
