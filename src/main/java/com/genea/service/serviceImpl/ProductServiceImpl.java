@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
                     .price(productRequest.getPrice())
                     .productName(productRequest.getName())
                     .description(productRequest.getDescription())
-                    .image(productRequest.getImage())
+                    .imageUrl(productRequest.getImageUrl())
                     .category(productRequest.getCategory())
                     .manufacturer(manufacturer)
                     .stock(productRequest.getStock())
@@ -157,6 +157,13 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public List<ProductSearchResponse> getProductsByKeyword(String keyword) {
         List<Product> products = productRepository.searchProductByKeyword(keyword);
+        return products.stream()
+                .map(ProductSearchResponse::new)
+                .collect(Collectors.toList());
+    }
+    @Override
+    public List<ProductSearchResponse> searchProduct(String keyword, Double price) {
+        List<Product> products = productRepository.searchProduct(keyword, price);
         return products.stream()
                 .map(ProductSearchResponse::new)
                 .collect(Collectors.toList());

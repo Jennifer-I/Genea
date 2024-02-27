@@ -27,7 +27,7 @@ public class CreateProductRequest {
 
     private ProductCategory category;
 
-    private byte[] image;
+    private String imageUrl;
 
 
     private Long manufacturerId;

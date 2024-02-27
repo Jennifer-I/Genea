@@ -42,4 +42,7 @@ public interface ProductService {
     List<ProductSearchResponse> getProductByManufacturerLocation(String location);
 
     List<ProductSearchResponse> getProductsByKeyword(String keyword);
+
+
+    List<ProductSearchResponse> searchProduct(String keyword, Double price);
 }

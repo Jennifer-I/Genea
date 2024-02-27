@@ -30,8 +30,8 @@ public class Product {
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
-    @Column(columnDefinition = "bytea")
-    private byte[] image;
+//    @Column(columnDefinition = "bytea")
+    private String imageUrl;
 
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
@@ -53,7 +53,7 @@ public class Product {
                         "\treviews=%s,\n" +
                         "\tmanufacturer=" + (manufacturer != null ? manufacturer.getManufacturersName() : "null") + "\n"+
                         "}\n",
-                id, productName, description, price, stock, category, Arrays.toString(image), reviews);
+                id, productName, description, price, stock, category, imageUrl, reviews);
     }
 
 

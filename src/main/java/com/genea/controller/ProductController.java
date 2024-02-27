@@ -99,6 +99,14 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductByManufacturerLocation(location));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','CUSTOMER')")
+    @GetMapping("/searchProduct/{keyword}")
+    public ResponseEntity<List<ProductSearchResponse>> searchProduct(@PathVariable String keyword,@RequestParam(required = false) Double price){
+        List<ProductSearchResponse> searchResults = productService.searchProduct(keyword,price);
+        return ResponseEntity.ok(searchResults);
+    }
+
+
 
 
 }

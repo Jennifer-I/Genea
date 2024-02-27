@@ -16,7 +16,7 @@ public class ProductSearchResponse {
 
     private Double price;
     private ProductCategory category;
-    private byte[] image;
+    private String image;
     private String manufacturersName;
 
     private String location;
@@ -28,7 +28,7 @@ public class ProductSearchResponse {
         this.description = product.getDescription();
         this.price = product.getPrice();
         this.category = product.getCategory();
-        this.image = product.getImage();
+        this.image = product.getImageUrl();
         this.manufacturersName = product.getManufacturer().getManufacturersName();
         this.location = product.getManufacturer().getLocation();
     }

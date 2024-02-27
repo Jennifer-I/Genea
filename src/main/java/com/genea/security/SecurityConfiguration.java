@@ -34,7 +34,7 @@ public class SecurityConfiguration {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests((auths) -> auths
                         .requestMatchers(new AntPathRequestMatcher("/h2-console/**")).permitAll()
-                        .requestMatchers("/error").permitAll()
+                        .requestMatchers("error").permitAll()
                         .requestMatchers(new AntPathRequestMatcher("/api/v1/auth/**")).permitAll()
 //                        .requestMatchers(new AntPathRequestMatcher("/api/v1/product/**")).hasRole("ADMIN")
                         .anyRequest().authenticated())
