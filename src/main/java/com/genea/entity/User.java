@@ -37,7 +37,11 @@ public class User {
     private Boolean isVerified = false;
     private String fullName;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy ="user")
+    private List<Transaction> transaction;
+
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserAccountToken> userAccountToken;
 
 }

@@ -24,7 +24,7 @@ public class UserAccountToken {
 
     @Enumerated(EnumType.STRING)
     private TokenType tokenType;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
 

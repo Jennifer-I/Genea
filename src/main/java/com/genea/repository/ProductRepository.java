@@ -26,12 +26,10 @@ public interface  ProductRepository extends JpaRepository<Product,Long> {
 
     Optional<Product> findByProductName(String productName);
 
-    @Query("SELECT product FROM Product product " +
-            "WHERE " +
-            "LOWER(product.manufacturer.location) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
+    @Query("SELECT product FROM Product product " + "WHERE " + "(LOWER(product.manufacturer.location) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(product.productName) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
             "LOWER(product.description) LIKE LOWER(CONCAT('%', :keyword, '%')) OR " +
-            "(product.price = :price OR :price is NULL) OR " +
-            "LOWER(product.manufacturer.manufacturersName) LIKE LOWER(CONCAT('%', :keyword, '%'))")
+            "LOWER(product.manufacturer.manufacturersName) LIKE LOWER(CONCAT('%', :keyword, '%'))) " +
+            "AND (:price IS NULL OR product.price = :price)")
     List<Product> searchProduct(@Param("keyword") String keyword, @Param("price") Double price);
 }
