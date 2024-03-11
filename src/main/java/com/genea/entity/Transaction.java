@@ -1,6 +1,7 @@
 package com.genea.entity;
 
 
+import com.genea.enums.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +25,8 @@ public class Transaction {
     private String createdAt;
     private BigDecimal amount;
     private String reference;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 
     @ManyToOne
     @JoinColumn( nullable = false,name = "user_id")

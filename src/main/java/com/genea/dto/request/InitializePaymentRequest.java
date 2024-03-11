@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @Setter
 
 
-public class InitializeTransactionRequest {
+public class InitializePaymentRequest {
     private BigDecimal amount;
     private String email;
     private String reference;

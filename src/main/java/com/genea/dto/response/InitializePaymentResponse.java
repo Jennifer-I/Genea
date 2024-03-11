@@ -6,9 +6,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class InitializeTransactionResponse {
+public class InitializePaymentResponse {
 
-    private String status;
+    private Boolean status;
     private String message;
     private Data data;
 
