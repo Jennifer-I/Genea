@@ -21,8 +21,10 @@ public class InitializePaymentResponse {
         private String authorizationUrl;
         @SerializedName("access_code")
         private String accessCode;
-        @SerializedName("reference")
+
         private String reference;
+
+
 
     }
 

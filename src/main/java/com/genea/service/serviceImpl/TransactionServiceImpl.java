@@ -3,13 +3,14 @@ package com.genea.service.serviceImpl;
 import com.genea.config.PayStackClient;
 import com.genea.dto.request.InitializePaymentRequest;
 import com.genea.dto.response.InitializePaymentResponse;
+import com.genea.dto.response.TransactionResponse;
 import com.genea.dto.response.VerifyPaymentResponse;
 import com.genea.entity.Transaction;
 import com.genea.entity.User;
 import com.genea.enums.PaymentStatus;
 import com.genea.repository.TransactionRepository;
 import com.genea.repository.UserRepository;
-import com.genea.service.PaymentService;
+import com.genea.service.TransactionService;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,12 +22,12 @@ import java.time.LocalDateTime;
 @Slf4j
 @Transactional
 
-public class PaymentServiceImpl implements PaymentService {
+public class TransactionServiceImpl implements TransactionService {
     private final PayStackClient paystackClient;
     private final UserRepository userRepository;
     private final TransactionRepository transactionRepository;
 
-    public PaymentServiceImpl(PayStackClient paystackClient, UserRepository userRepository, TransactionRepository transactionRepository) {
+    public TransactionServiceImpl(PayStackClient paystackClient, UserRepository userRepository, TransactionRepository transactionRepository) {
         this.paystackClient = paystackClient;
         this.userRepository = userRepository;
         this.transactionRepository = transactionRepository;
@@ -96,6 +97,17 @@ public class PaymentServiceImpl implements PaymentService {
         }
         return null;
     }
+
+    @Override
+    public TransactionResponse getAllTransactions() {
+        return paystackClient.getTransaction();
+    }
+    @Override
+    public TransactionResponse getTransactionById(String id) {
+        return paystackClient.getTransactionById(id);
+    }
+
+
 
 
 }

@@ -1,5 +1,6 @@
 package com.genea.dto.request;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,4 +15,5 @@ public class InitializePaymentRequest {
     private BigDecimal amount;
     private String email;
     private String reference;
+
 }
