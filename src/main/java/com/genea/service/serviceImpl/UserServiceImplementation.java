@@ -63,6 +63,7 @@ public class UserServiceImplementation implements UserService {
                 .fullName(request.getFirstName() + " " + request.getLastName())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .isVerified(false)
+                .phoneNumber(request.getPhoneNumber())
                 .isActive(false)
                 .role(Role.CUSTOMER)
                 .build();
@@ -253,6 +254,7 @@ public class UserServiceImplementation implements UserService {
                 .isVerified(false)
                 .isActive(false)
                 .createdAt(LocalDateTime.now())
+                .phoneNumber(registrationRequestDto.getPhoneNumber())
                 .password(passwordEncoder.encode(registrationRequestDto.getPassword())).isActive(true)
                 .fullName(registrationRequestDto.getFirstName() + " " + registrationRequestDto.getLastName())
                 .build();

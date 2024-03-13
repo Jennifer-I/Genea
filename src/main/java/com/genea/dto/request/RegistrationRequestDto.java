@@ -13,6 +13,7 @@ public class RegistrationRequestDto {
     private String lastName;
     private String email;
     private String Password;
+    private String phoneNumber;
     private Role role;
 
 

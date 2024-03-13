@@ -44,6 +44,8 @@ public class TransactionServiceImpl implements TransactionService {
             if (response.getStatus().equals(true)) {
                 Transaction transaction = new Transaction();
                 transaction.setUser(user);
+                transaction.setFirstName(user.getFirstName());
+                transaction.setLastName(user.getLastName());
                 transaction.setAmount(request.getAmount());
                 transaction.setReference(response.getData().getReference());
                 transaction.setCreatedAt(LocalDateTime.now().toString());
@@ -100,14 +102,29 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Override
     public TransactionResponse getAllTransactions() {
-        return paystackClient.getTransaction();
+        log.info("Retrieving all transactions from PayStack");
+        TransactionResponse payStackTransactions = paystackClient.getTransaction();
+
+        for (TransactionResponse.Data transaction : payStackTransactions.getTransactions()) {
+            String userEmail = transaction.getCustomer().getEmail();
+            User user = userRepository.findByEmail(userEmail).orElse(null);
+
+            log.info("mapping user retrieved to transactions");
+            if (user != null) {
+                transaction.getCustomer().setFirstName(user.getFirstName());
+                transaction.getCustomer().setLastName(user.getLastName());
+                transaction.getCustomer().setPhone(user.getPhoneNumber());
+            }
+        }
+
+        return payStackTransactions;
     }
+
+
     @Override
     public TransactionResponse getTransactionById(String id) {
         return paystackClient.getTransactionById(id);
     }
-
-
 
 
 }

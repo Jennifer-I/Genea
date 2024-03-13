@@ -23,5 +23,6 @@ public interface PayStackClient {
     @RequestLine("GET/transaction/{id}")
     TransactionResponse getTransactionById(@Param("id") String id);
 
+
 }
 

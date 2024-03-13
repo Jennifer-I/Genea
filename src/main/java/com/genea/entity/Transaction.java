@@ -20,6 +20,8 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private String firstName;
+    private String lastName;
     private String transactionType;
     private String description;
     private String createdAt;
@@ -27,6 +29,7 @@ public class Transaction {
     private String reference;
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+
 
     @ManyToOne
     @JoinColumn( nullable = false,name = "user_id")

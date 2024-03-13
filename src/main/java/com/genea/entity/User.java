@@ -36,6 +36,7 @@ public class User {
     private LocalDateTime LastLogin;
     private Boolean isVerified = false;
     private String fullName;
+    private String phoneNumber;
 
     @OneToMany(mappedBy ="user")
     private List<Transaction> transaction;
