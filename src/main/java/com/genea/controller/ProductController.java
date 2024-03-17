@@ -105,6 +105,11 @@ public class ProductController {
         List<ProductSearchResponse> searchResults = productService.searchProduct(keyword,price);
         return ResponseEntity.ok(searchResults);
     }
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PostMapping("/addProductToCart/{productId}")
+    public String addProductToCart(@PathVariable Long productId) {
+        return productService.addProductToCart(productId);
+    }
 
 
 

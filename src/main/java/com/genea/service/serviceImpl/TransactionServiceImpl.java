@@ -116,7 +116,6 @@ public class TransactionServiceImpl implements TransactionService {
                 transaction.getCustomer().setPhone(user.getPhoneNumber());
             }
         }
-
         return payStackTransactions;
     }
 

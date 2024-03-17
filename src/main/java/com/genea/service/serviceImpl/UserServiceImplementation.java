@@ -5,11 +5,13 @@ import com.genea.dto.response.ApiResponse;
 import com.genea.dto.response.LoginResponse;
 import com.genea.dto.response.UserResponseDto;
 import com.genea.email.EmailService;
+import com.genea.entity.Cart;
 import com.genea.entity.User;
 import com.genea.entity.UserAccountToken;
 import com.genea.enums.Role;
 import com.genea.enums.TokenType;
 import com.genea.exception.UserNotFoundException;
+import com.genea.repository.CartRepository;
 import com.genea.repository.TokenRepository;
 import com.genea.repository.UserRepository;
 
@@ -42,8 +44,9 @@ public class UserServiceImplementation implements UserService {
     private final TokenRepository tokenRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
+    private final CartRepository cartRepository;
 
-    public UserServiceImplementation(@Value("${spring.mail.username}") String sender, @Value("${admin_email}") String adminEmail, JwtConfig jwtConfig, UserRepository userRepository, EmailService emailService, TokenRepository tokenRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder) {
+    public UserServiceImplementation(@Value("${spring.mail.username}") String sender, @Value("${admin_email}") String adminEmail, JwtConfig jwtConfig, UserRepository userRepository, EmailService emailService, TokenRepository tokenRepository, AuthenticationManager authenticationManager, PasswordEncoder passwordEncoder, CartRepository cartRepository) {
         this.sender = sender;
         this.adminEmail = adminEmail;
         this.jwtConfig = jwtConfig;
@@ -52,6 +55,7 @@ public class UserServiceImplementation implements UserService {
         this.tokenRepository = tokenRepository;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
+        this.cartRepository = cartRepository;
     }
 
 
@@ -67,6 +71,7 @@ public class UserServiceImplementation implements UserService {
                 .isActive(false)
                 .role(Role.CUSTOMER)
                 .build();
+
 
     }
 
@@ -93,6 +98,7 @@ public class UserServiceImplementation implements UserService {
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "User already exists", null, HttpStatus.BAD_REQUEST);
         }
         User newUser = createUserFromRequest(request);
+        Cart.builder().user(newUser).build();
         userRepository.save(newUser);
 
         UserAccountToken userAccountToken = createVerificationToken(newUser.getId());
@@ -281,8 +287,8 @@ public class UserServiceImplementation implements UserService {
         try {
             authenticateUser = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
             log.info("User authenticated");
-        }catch (DisabledException es) {
-                log.error("User is disabled", es);
+        } catch (DisabledException es) {
+            log.error("User is disabled", es);
             return new ApiResponse<>(HttpStatus.BAD_REQUEST.value(), "Invalid email or password", null, HttpStatus.BAD_REQUEST);
 
         }

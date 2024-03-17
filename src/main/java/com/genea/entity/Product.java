@@ -25,12 +25,17 @@ public class Product {
 
     private Double price;
 
+    private Integer quantity;
+
+    @OneToOne(mappedBy = "product")
+    private Inventory inventory;
+
 
     private Integer stock;
     @Enumerated(EnumType.STRING)
     private ProductCategory category;
 
-//    @Column(columnDefinition = "bytea")
+
     private String imageUrl;
 
     @OneToMany(mappedBy = "product")

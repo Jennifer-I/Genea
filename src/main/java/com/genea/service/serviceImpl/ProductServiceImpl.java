@@ -3,19 +3,17 @@ package com.genea.service.serviceImpl;
 import com.genea.dto.request.CreateProductRequest;
 import com.genea.dto.request.ManufacturerRequest;
 import com.genea.dto.response.ProductSearchResponse;
-import com.genea.entity.Manufacturer;
-import com.genea.entity.Product;
-import com.genea.entity.User;
+import com.genea.entity.*;
 import com.genea.enums.ProductCategory;
 import com.genea.exception.CustomException;
 import com.genea.exception.UserNotFoundException;
-import com.genea.repository.ManufacturerRepository;
-import com.genea.repository.ProductRepository;
-import com.genea.repository.UserRepository;
+import com.genea.repository.*;
 import com.genea.service.ProductService;
 import com.genea.utils.LoggedInUserUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -26,12 +24,15 @@ public class ProductServiceImpl implements ProductService {
     private final LoggedInUserUtils utils;
     private final ProductRepository productRepository;
     private final ManufacturerRepository manufacturerRepository;
+    private final CartRepository cartRepository;
 
-    public ProductServiceImpl(UserRepository userRepository, LoggedInUserUtils utils, ProductRepository productRepository, ManufacturerRepository manufacturerRepository) {
+
+    public ProductServiceImpl(UserRepository userRepository, LoggedInUserUtils utils, ProductRepository productRepository, ManufacturerRepository manufacturerRepository, CartRepository cartRepository) {
         this.userRepository = userRepository;
         this.utils = utils;
         this.productRepository = productRepository;
         this.manufacturerRepository = manufacturerRepository;
+        this.cartRepository = cartRepository;
     }
 
     @Override
@@ -171,44 +172,49 @@ public class ProductServiceImpl implements ProductService {
     }
 
 
+    @Override
+    @Transactional
+    public String addProductToCart(Long productId) {
+        String loggedInUsername = utils.getLoggedInUser();
+        if (loggedInUsername == null) {
+            throw new CustomException("User not logged in");
+        }
+        User loggedInUser = userRepository.findByEmail(loggedInUsername)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Cart cart = loggedInUser.getCart();
+        if (cart == null) {
+            cart = new Cart();
+            cart.setUser(loggedInUser);
+            cart.setCartItems(new ArrayList<>());
+        }
+        Product productToAdd = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException("Product not found"));
+        List<CartItem> cartItems = cart.getCartItems();
+
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getProduct().equals(productToAdd)) {
+                cartItem.setQuantity(cartItem.getQuantity() + 1);
+                cartRepository.save(cart);
+                return "Product quantity increased in cart";
+            }
+        }
+
+        CartItem newCartItem = new CartItem();
+        newCartItem.setProduct(productToAdd);
+        newCartItem.setQuantity(1);
+        newCartItem.setPrice(productToAdd.getPrice());
+        newCartItem.setCart(cart);
+        cartItems.add(newCartItem);
+        cart.setCartItems(cartItems);
+        cartRepository.save(cart);
+
+        return "Product added to cart";
+    }
 }
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//public List<Product> searchProductByKeyword(String keyword) {
-//    List<Product> products = productRepository.searchProductByKeyword(keyword);
-//    List<Product> filteredProducts = new ArrayList<>();
-//
-//    for (Product product : products) {
-//        if (product.getProductName().toLowerCase().contains(keyword.toLowerCase()) ||
-//                product.getDescription().toLowerCase().contains(keyword.toLowerCase())) {
-//            filteredProducts.add(product);
-//        }
-//    }
-//
-//    if (filteredProducts.isEmpty()) {
-//        throw new CustomException("Product not found");
-//    }
-//    return filteredProducts;
-//}
 
 

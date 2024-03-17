@@ -41,6 +41,9 @@ public class User {
     @OneToMany(mappedBy ="user")
     private List<Transaction> transaction;
 
+    @OneToOne(mappedBy = "user")
+    private Cart cart;
+
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserAccountToken> userAccountToken;

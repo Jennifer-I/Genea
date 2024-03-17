@@ -6,6 +6,7 @@ import com.genea.dto.response.ApiResponse;
 import com.genea.dto.response.ProductSearchResponse;
 import com.genea.entity.Manufacturer;
 import com.genea.entity.Product;
+import com.genea.entity.User;
 import com.genea.enums.ProductCategory;
 
 import java.util.List;
@@ -45,4 +46,9 @@ public interface ProductService {
 
 
     List<ProductSearchResponse> searchProduct(String keyword, Double price);
+
+
+    String addProductToCart(Long productId);
+
+
 }
