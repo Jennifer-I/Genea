@@ -107,10 +107,16 @@ public class ProductController {
     }
     @PreAuthorize("hasRole('CUSTOMER')")
     @PostMapping("/addProductToCart/{productId}")
-    public String addProductToCart(@PathVariable Long productId) {
-        return productService.addProductToCart(productId);
+    public ResponseEntity<String> addProductToCart(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.addProductToCart(productId));
     }
 
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @DeleteMapping("/removeProductFromCart/{productId}")
+    public ResponseEntity<String> removeProductFromCart(@PathVariable Long productId) {
+        return ResponseEntity.ok(productService.removeProductFromCart(productId));
+    }
 
 
 

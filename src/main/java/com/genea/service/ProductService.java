@@ -51,4 +51,5 @@ public interface ProductService {
     String addProductToCart(Long productId);
 
 
+    String removeProductFromCart(Long productId);
 }

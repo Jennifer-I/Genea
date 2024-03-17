@@ -2,6 +2,7 @@ package com.genea.service.serviceImpl;
 
 import com.genea.dto.request.CreateProductRequest;
 import com.genea.dto.request.ManufacturerRequest;
+import com.genea.dto.response.CartDto;
 import com.genea.dto.response.ProductSearchResponse;
 import com.genea.entity.*;
 import com.genea.enums.ProductCategory;
@@ -190,6 +191,9 @@ public class ProductServiceImpl implements ProductService {
         }
         Product productToAdd = productRepository.findById(productId)
                 .orElseThrow(() -> new CustomException("Product not found"));
+        if (productToAdd.getQuantity() <= 0) {
+            throw new CustomException("Product is out of stock");
+        }
         List<CartItem> cartItems = cart.getCartItems();
 
         for (CartItem cartItem : cartItems) {
@@ -211,6 +215,39 @@ public class ProductServiceImpl implements ProductService {
 
         return "Product added to cart";
     }
+
+    @Override
+    public String removeProductFromCart(Long productId){
+        String loggedInUsername = utils.getLoggedInUser();
+        if (loggedInUsername == null) {
+            throw new CustomException("User not logged in");
+        }
+        User loggedInUser = userRepository.findByEmail(loggedInUsername)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        Cart cart = loggedInUser.getCart();
+        if (cart == null) {
+            throw new CustomException("Cart not found");
+        }
+        Product productToRemove = productRepository.findById(productId)
+                .orElseThrow(() -> new CustomException("Product not found"));
+        List<CartItem> cartItems = cart.getCartItems();
+
+        for (CartItem cartItem : cartItems) {
+            if (cartItem.getProduct().equals(productToRemove)) {
+                cartItems.remove(cartItem);
+                cartRepository.save(cart);
+                return "Product removed from cart";
+            }
+        }
+        throw new CustomException("Product not found in cart");
+    }
+
+
+
+
+
+
 }
 
 
