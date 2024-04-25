@@ -36,32 +36,41 @@ public class AddressServiceImpl implements AddressService {
     @Override
     public String saveAddress(AddressRequest addressRequest) {
         User loggedInUser = getUser();
-        if (loggedInUser.getAddressId() != null) {
-            throw new CustomException("Address already exists");
-        }
+        Address addressExists = addressRepository.findByUser(loggedInUser);
+        if (addressExists != null) {
+            addressRepository.delete(addressExists);
 
-        Address address = new Address();
-        address.setAddressLine(addressRequest.getAddressLine());
-        address.setCity(addressRequest.getCity());
-        address.setState(addressRequest.getState());
-        address.setPhoneNumber(addressRequest.getPhoneNumber());
-        address.setUser(loggedInUser);
-
-        try {
-            log.info("Saving address and linking it to the user");
+            Address address = new Address();
+            address.setAddressLine(addressRequest.getAddressLine());
+            address.setCity(addressRequest.getCity());
+            address.setState(addressRequest.getState());
+            address.setPhoneNumber(addressRequest.getPhoneNumber());
+            address.setUser(loggedInUser);
             addressRepository.save(address);
-
-            loggedInUser.setAddressId(address.getId());
-            userRepository.save(loggedInUser);
             return "Address saved successfully";
-
-        } catch (DataIntegrityViolationException e) {
-            throw new CustomException("Error saving address: User already has an address");
+        } else {
+            throw new CustomException("Address already exists");
         }
     }
 
+    @Override
+    public String editAddress(AddressRequest addressRequest) {
+        User user = getUser();
+        Long addressId = user.getAddressId();
+        if (addressId == null) {
+            throw new CustomException("Address not found");
+        }
+        Address address = addressRepository.findById(addressId)
+                .orElseThrow(() -> new CustomException("Address not found"));
 
+        address.setState(addressRequest.getState());
+        address.setAddressLine(addressRequest.getAddressLine());
+        address.setCity(addressRequest.getCity());
+        address.setPhoneNumber(addressRequest.getPhoneNumber());
+        addressRepository.save(address);
 
+        return "Address edited successfully";
+    }
 
 
 }
