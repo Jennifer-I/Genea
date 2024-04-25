@@ -1,6 +1,7 @@
 package com.jennifer.controller;
 
 import com.jennifer.dto.request.AddressRequest;
+import com.jennifer.dto.response.ApiResponse;
 import com.jennifer.service.AddressService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,9 @@ public class AddressController {
     }
 
 
-
     @PreAuthorize("hasRole('CUSTOMER')")
     @DeleteMapping("/deleteAddress/{addressId}")
-    public void deleteAddress(@PathVariable Long addressId) {
-        addressService.deleteAddress(addressId);
+    public ApiResponse<String> deleteAddress(@PathVariable Long addressId) {
+        return addressService.deleteAddress(addressId);
     }
-
 }
