@@ -18,11 +18,13 @@ public class AddressController {
     public ResponseEntity<String> addAddress(@RequestBody AddressRequest addressRequest) {
         return ResponseEntity.ok(addressService.saveAddress(addressRequest));
     }
-    @PreAuthorize("hasRole('CUSTOMER')")
-    @PutMapping("/editAddress")
-    public ResponseEntity<String> editAddress(@RequestBody AddressRequest addressRequest) {
-        return ResponseEntity.ok(addressService.editAddress(addressRequest));
-    }
 
+
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @DeleteMapping("/deleteAddress/{addressId}")
+    public void deleteAddress(@PathVariable Long addressId) {
+        addressService.deleteAddress(addressId);
+    }
 
 }

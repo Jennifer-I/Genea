@@ -11,7 +11,6 @@ import com.jennifer.service.AddressService;
 import com.jennifer.utils.LoggedInUserUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -32,45 +31,34 @@ public class AddressServiceImpl implements AddressService {
         return userRepository.findByEmail(loggedInUsername)
                 .orElseThrow(() -> new UserNotFoundException("User not found"));
     }
-
     @Override
     public String saveAddress(AddressRequest addressRequest) {
         User loggedInUser = getUser();
-        Address addressExists = addressRepository.findByUser(loggedInUser);
-        if (addressExists != null) {
-            addressRepository.delete(addressExists);
+        Address existingAddress = loggedInUser.getAddress();
 
-            Address address = new Address();
-            address.setAddressLine(addressRequest.getAddressLine());
-            address.setCity(addressRequest.getCity());
-            address.setState(addressRequest.getState());
-            address.setPhoneNumber(addressRequest.getPhoneNumber());
-            address.setUser(loggedInUser);
-            addressRepository.save(address);
-            return "Address saved successfully";
+        if (existingAddress != null) {
+            existingAddress.setAddressLine(addressRequest.getAddressLine());
+            existingAddress.setCity(addressRequest.getCity());
+            existingAddress.setState(addressRequest.getState());
+            existingAddress.setPhoneNumber(addressRequest.getPhoneNumber());
+            addressRepository.save(existingAddress);
+            return "Address updated successfully";
         } else {
-            throw new CustomException("Address already exists");
+            Address newAddress = new Address();
+            newAddress.setAddressLine(addressRequest.getAddressLine());
+            newAddress.setCity(addressRequest.getCity());
+            newAddress.setState(addressRequest.getState());
+            newAddress.setPhoneNumber(addressRequest.getPhoneNumber());
+            newAddress.setUser(loggedInUser);
+            loggedInUser.setAddress(newAddress);
+            addressRepository.save(newAddress);
+            return "Address saved successfully";
         }
     }
 
-    @Override
-    public String editAddress(AddressRequest addressRequest) {
-        User user = getUser();
-        Long addressId = user.getAddressId();
-        if (addressId == null) {
-            throw new CustomException("Address not found");
-        }
-        Address address = addressRepository.findById(addressId)
-                .orElseThrow(() -> new CustomException("Address not found"));
 
-        address.setState(addressRequest.getState());
-        address.setAddressLine(addressRequest.getAddressLine());
-        address.setCity(addressRequest.getCity());
-        address.setPhoneNumber(addressRequest.getPhoneNumber());
-        addressRepository.save(address);
 
-        return "Address edited successfully";
-    }
+
 
 
 }

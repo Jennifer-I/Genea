@@ -38,8 +38,8 @@ public class User {
     private String fullName;
     private String phoneNumber;
 
-    private Long addressId;
-
+    @OneToOne(mappedBy = "user")
+    private Address address;
     @OneToMany(mappedBy ="user")
     private List<Transaction> transaction;
 
