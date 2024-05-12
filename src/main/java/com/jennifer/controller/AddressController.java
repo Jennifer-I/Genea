@@ -23,7 +23,8 @@ public class AddressController {
 
     @PreAuthorize("hasRole('CUSTOMER')")
     @DeleteMapping("/deleteAddress/{addressId}")
-    public ApiResponse<String> deleteAddress(@PathVariable Long addressId) {
-        return addressService.deleteAddress(addressId);
+    public ResponseEntity<ApiResponse<String>> deleteAddress(@PathVariable Long addressId) {
+        addressService.deleteAddress(addressId);
+        return ResponseEntity.ok(new ApiResponse<>("Address deleted successfully"));
     }
 }
