@@ -92,6 +92,77 @@ public class ShippingAddressServiceImpl implements ShippingAddressService {
         return newShippingAddress;
     }
 
+    @Override
+    public String deleteShippingAddress(Long id) {
+        try {
+            shippingAddressRepository.deleteById(id);
+            return "Shipping address deleted successfully";
+        } catch (Exception e) {
+            log.error("error occurred while deleting shipping address", e);
+            return "Failed to delete shipping address";
+        }
+    }
+
+
+    @Override
+    public AddressResponse getShippingAddress(Long id) {
+        ShippingAddress shippingAddress = shippingAddressRepository.findById(id)
+                .orElseThrow(() -> new CustomException("Shipping address not found"));
+        return new AddressResponse(shippingAddress);
+    }
+
+
+    @Override
+    public void setDefaultShippingAddress(Long addressId) throws Exception {
+        Optional<ShippingAddress> optionalAddress = shippingAddressRepository.findById(addressId);
+        if (optionalAddress.isPresent()) {
+            ShippingAddress newDefaultAddress = optionalAddress.get();
+            boolean isAlreadyDefault = newDefaultAddress.isDefaultShippingAddress();
+
+            if (isAlreadyDefault) {
+                return;
+            }
+            long totalAddressCount = shippingAddressRepository.count();
+            if (totalAddressCount == 1) {
+                throw new Exception("There is only one address in total, it must remain as default.");
+            }
+
+            log.info("Unsetting default status for current default address");
+            Optional<ShippingAddress> optionalCurrentDefault = shippingAddressRepository.findByIsDefaultShippingAddress(true);
+            if (optionalCurrentDefault.isPresent()) {
+                ShippingAddress currentDefaultAddress = optionalCurrentDefault.get();
+                currentDefaultAddress.setDefaultShippingAddress(false);
+                shippingAddressRepository.save(currentDefaultAddress);
+            }
+
+            log.info("Setting default shipping address");
+            newDefaultAddress.setDefaultShippingAddress(true);
+            shippingAddressRepository.save(newDefaultAddress);
+        } else {
+            throw new Exception("Shipping address not found with ID: " + addressId);
+        }
+    }
+
+    @Override
+    public ShippingAddress getDefaultShippingAddress() {
+        Optional<ShippingAddress> optionalShippingAddress = shippingAddressRepository.findByIsDefaultShippingAddress(true);
+        if (optionalShippingAddress.isPresent()) {
+            return optionalShippingAddress.get();
+        } else {
+            throw new CustomException("Default shipping address not found");
+        }
+    }
+
+    @Override
+    public List<AddressResponse> getAllShippingAddresses() {
+        List<ShippingAddress> shippingAddresses = shippingAddressRepository.findAll();
+        return shippingAddresses.stream()
+                .map(AddressResponse::new)
+                .collect(Collectors.toList());
+    }
+
+}
+
 
 
 

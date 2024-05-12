@@ -34,6 +34,49 @@ public class ShippingAddressController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @DeleteMapping("/deleteShippingAddress/{id}")
+    public ResponseEntity<String> deleteShippingAddress(@PathVariable Long id) {
+        try {
+            shippingAddressService.deleteShippingAddress(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error occurred while adding shipping address", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @PatchMapping("/setDefaultShippingAddress/{id}")
+    public ResponseEntity<String> setDefaultShippingAddress(@PathVariable Long id) {
+        try {
+            shippingAddressService.setDefaultShippingAddress(id);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            log.error("Error occurred while adding shipping address", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/getShippingAddress/{id}")
+    public ResponseEntity<AddressResponse> getShippingAddress(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(shippingAddressService.getShippingAddress(id));
+        } catch (Exception e) {
+            log.error("Error occurred while adding shipping address", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @GetMapping("/getsAllShippingAddresses")
+    public ResponseEntity<List<AddressResponse>> getAllShippingAddresses() {
+        List<AddressResponse> shippingAddresses = shippingAddressService.getAllShippingAddresses();
+        return ResponseEntity.ok(shippingAddresses);
+    }
+
+
 
 
 
